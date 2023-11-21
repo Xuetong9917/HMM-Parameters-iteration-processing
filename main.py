@@ -5,22 +5,22 @@
 # return alpha dict
 import numpy as np
 
+
 def alpha_cal(alpha_dict, str, t, i):
     if t == 1:
-        return starting_prob[i]*observation_prob[(i, str)]
+        return starting_prob[i] * observation_prob[(i, str)]
     else:
         temp_sum = 0
         for j in observation_state:
-            temp_sum += alpha_dict[(t-1, j)] * transition_prob[(j, i)] * observation_prob[(i, str)]
+            temp_sum += alpha_dict[(t - 1, j)] * transition_prob[(j, i)] * observation_prob[(i, str)]
         return temp_sum
 
 
 def beta_cal(beta_dict, str, t, i):
     temp_sum = 0
     for j in observation_state:
-        temp_sum += beta_dict[(t+1, j)] * transition_prob[i, j] * observation_prob[(j, str)]
+        temp_sum += beta_dict[(t + 1, j)] * transition_prob[i, j] * observation_prob[(j, str)]
     return temp_sum
-
 
 
 def calculation_func(seq_str):
@@ -29,9 +29,9 @@ def calculation_func(seq_str):
     delta_dict = {}
     s_dict = {}
 
-    for t in range(1, len(seq_str)+1):
+    for t in range(1, len(seq_str) + 1):
         for i in observation_state:
-            alpha_dict[(t, i)] = alpha_cal(alpha_dict, seq_str[t-1], t, i)
+            alpha_dict[(t, i)] = alpha_cal(alpha_dict, seq_str[t - 1], t, i)
 
     for t in range(len(seq_str), 0, -1):
         for i in observation_state:
@@ -48,9 +48,9 @@ def calculation_func(seq_str):
         for i in observation_state:
             for j in observation_state:
                 delta_dict[(t, i, j)] = (alpha_dict[(t, i)] * transition_prob[(i, j)] *
-                                         observation_prob[(j, seq_str[t])] * beta_dict[(t+1, j)])/P_O
+                                         observation_prob[(j, seq_str[t])] * beta_dict[(t + 1, j)]) / P_O
 
-    for t in range(1, len(seq_str)+1):
+    for t in range(1, len(seq_str) + 1):
         P_t_O = 0
         for i in observation_state:
             P_t_O += alpha_dict[(t, i)]
@@ -60,13 +60,12 @@ def calculation_func(seq_str):
     return delta_dict, s_dict, P_O
 
 
-
-def iter_func(starting_prob, observation_state, observation_prob, transition_prob):
+def iter_func():
     # the state sequence is ABBA
-    ABBA_sequence_str = 'ABBA'
+    ABBA_sequence_str = 'ABAB'
     ABBA_delta_dict, ABBA_s_dict, ABBA_P_O = calculation_func(ABBA_sequence_str)
     # the state sequence is BAB
-    BAB_sequence_str = 'BAB'
+    BAB_sequence_str = 'ABA'
     BAB_delta_dict, BAB_s_dict, BAB_P_O = calculation_func(BAB_sequence_str)
 
     ABBA_c = 10
@@ -77,9 +76,9 @@ def iter_func(starting_prob, observation_state, observation_prob, transition_pro
 
     # for new starting probability
 
-    I = ABBA_s_dict[(1, 's')]*ABBA_c + BAB_s_dict[(1, 's')]*BAB_c
-    J = ABBA_s_dict[(1, 't')]*ABBA_c + BAB_s_dict[(1, 't')]*BAB_c
-    sum_I_J = I+J
+    I = ABBA_s_dict[(1, 's')] * ABBA_c + BAB_s_dict[(1, 's')] * BAB_c
+    J = ABBA_s_dict[(1, 't')] * ABBA_c + BAB_s_dict[(1, 't')] * BAB_c
+    sum_I_J = I + J
     I = I / sum_I_J
     J = J / sum_I_J
     new_starting_prob = {'s': I, 't': J}
@@ -118,7 +117,6 @@ def iter_func(starting_prob, observation_state, observation_prob, transition_pro
         ('t', 'B'): N / (M + N)
     }
 
-
     return L_h, new_starting_prob, new_transition_prob, new_observation_prob
 
 
@@ -134,7 +132,7 @@ observation_prob = {
 }
 
 transition_prob = {
-    ('s','s'): 0.3,
+    ('s', 's'): 0.3,
     ('s', 't'): 0.7,
     ('t', 's'): 0.1,
     ('t', 't'): 0.9
@@ -142,8 +140,7 @@ transition_prob = {
 L_h = 0
 iter_count = 0
 while True:
-    new_L_h, new_starting_prob, new_transition_prob, new_observation_prob = \
-        iter_func(starting_prob, observation_state, observation_prob, transition_prob)
+    new_L_h, new_starting_prob, new_transition_prob, new_observation_prob = iter_func()
     if abs(L_h - new_L_h) < 0.001:
         print(iter_count)
         break
@@ -152,3 +149,12 @@ while True:
     transition_prob = new_transition_prob
     observation_prob = new_observation_prob
     iter_count += 1
+
+for item in starting_prob.items():
+    print(item)
+
+for item in transition_prob.items():
+    print(item)
+
+for item in observation_prob.items():
+    print(item)
