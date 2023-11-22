@@ -1,40 +1,22 @@
-# -*- coding: utf-8 -*-
-# @Author: WuLC
-# @Date:   2017-04-02 08:52:24
-# @Last Modified by:   WuLC
-# @Last Modified time: 2017-04-02 09:50:31
+# COMP4121 main project, HMM-VA
+# @Author: Xuetong Wang
+# @Date: 21/11/2023
 
-###########################################################################################################
 # Viterbi Algorithm for HMM
 # dynamic programming, time complexity O(mn^2), m is the length of sequence of observation, n is the number of hidden states
-# more details can be obtained from: http://wulc.me/2017/03/02/%E7%BB%B4%E7%89%B9%E6%AF%94%E7%AE%97%E6%B3%95/
-##########################################################################################################
 
-
-# five elements for HMM
-# states = ('Healthy', 'Fever')
 states = ('1', '2', '3')
 
-# observations = ('normal', 'cold', 'dizzy')
 observations = ('A', 'B')
 
-# start_probability = {'Healthy': 0.6, 'Fever': 0.4}
 start_probability = {'1': 1, '2': 0, '3': 0}
 
-# transition_probability = {
-#     'Healthy': {'Healthy': 0.7, 'Fever': 0.3},
-#     'Fever': {'Healthy': 0.4, 'Fever': 0.6},
-# }
 transition_probability = {
     '1': {'1': 0.34, '2': 0.54, '3': 0.12},
     '2': {'1': 1, '2': 0, '3': 0},
     '3': {'1': 1, '2': 0, '3': 0}
 }
 
-# emission_probability = {
-#     'Healthy': {'normal': 0.5, 'cold': 0.4, 'dizzy': 0.1},
-#     'Fever': {'normal': 0.1, 'cold': 0.3, 'dizzy': 0.6},
-# }
 emission_probability = {
     '1': {'A': 0.63, 'B': 0.37},
     '2': {'A': 0, 'B': 1},
